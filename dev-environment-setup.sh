@@ -107,6 +107,17 @@ defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 # Disable "natural" scroll
 defaults write NSGlobalDomain com.apple.swipescrolldirection -bool false
 
+# Save screenshots to folder
+defaults write com.apple.screencapture location -string "${HOME}/Screenshots"
+
+# Avoid creating .DS_Store files on network or USB volumes
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
+
+# Set machine name
+defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "Universe"
+
+
 echo "Creating development folder structure..."
 [[ ! -d Dev ]] && mkdir ~/Dev
 
