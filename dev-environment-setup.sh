@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # 
 # Machine set up script for setting up a new development environment
 # 
@@ -9,30 +9,37 @@
 # - If installing full Xcode, it's better to install that first from the app
 #   store before running the bootstrap script. Otherwise, Homebrew can't access
 #   the Xcode libraries as the agreement hasn't been accepted yet.
+# - Also Xcode tools has installed Git by default. Git is needed for the installation
+#   of Homebrew.
 #
 
-echo "Start..."
+add_separator () {
+  echo " "
+  echo "🔽🔽🔽🔽🔽🔽🔽🔽"
+  echo " "
+}
+
+echo " "
+echo "Start... ⚡️"
+
+add_separator
 
 # Check for Homebrew, install if we don't have it
 if test ! $(which brew); then
-    echo "Installing homebrew..."
+    echo "Installing Homebrew..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
 # Update Homebrew recipes
+echo "Tap, update and upgrade Homebrew..."
+brew tap homebrew/cask
 brew update
-
-# Install GNU core utilities (those that come with OS X are outdated)
-brew tap homebrew/dupes
-brew install coreutils
-brew install gnu-sed --with-default-names
-brew install gnu-tar --with-default-names
-brew install gnu-indent --with-default-names
-brew install gnu-which --with-default-names
-brew install gnu-grep --with-default-names
+brew upgrade
 
 # Install GNU `find`, `locate`, `updatedb`, and `xargs`, g-prefixed
 brew install findutils
+
+add_separator
 
 PACKAGES=(
     curl
@@ -45,14 +52,7 @@ PACKAGES=(
     jq
     libjpeg
     lynx
-    nvm
-    openjdk
     pkg-config
-    postgresql
-    protobuf
-    python
-    python3
-    redis
     ssh-copy-id
     the_silver_searcher
     tmux
@@ -62,15 +62,42 @@ PACKAGES=(
 )
 
 echo "Installing packages..."
-brew install ${PACKAGES[@]}
+brew install "${PACKAGES[@]}"
+
+add_separator
+
+LANGUAGES=(
+    nvm
+    openjdk
+    protobuf
+    python
+    python3
+)
+
+echo "Installing languages..."
+brew install "${LANGUAGES[@]}"
+
+
+echo "Create NVM folder if not existing..."
+[[ ! -d ~/.nvm ]] && mkdir ~/.nvm
+
+add_separator
+
+DATABASES=(
+    mongosh
+    postgresql@14
+    redis
+)
+
+echo "Installing databases..."
+brew install "${DATABASES[@]}"
 
 echo "Cleaning up..."
 brew cleanup
 
-echo "Installing cask..."
-brew install homebrew/cask
+add_separator
 
-CASKS=(
+APPS=(
     brave-browser
     docker
     firefox
@@ -79,17 +106,22 @@ CASKS=(
 )
 
 echo "Installing cask apps..."
-brew cask install ${CASKS[@]}
+brew install --cask "${APPS[@]}"
+
+add_separator
 
 echo "Installing fonts..."
-brew tap caskroom/fonts
+brew tap homebrew/cask-fonts
+
 FONTS=(
     font-hack-nerd-font
-    font-inconsolidata
+    font-inconsolata
     font-roboto
     font-clear-sans
 )
-brew cask install ${FONTS[@]}
+brew install --cask "${FONTS[@]}"
+
+add_separator
 
 echo "Configuring OSx..."
 
@@ -117,8 +149,18 @@ defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
 # Set machine name
 defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "Universe"
 
+add_separator
 
 echo "Creating development folder structure..."
-[[ ! -d Dev ]] && mkdir ~/Dev
+[[ ! -d ~/Dev ]] && mkdir ~/Dev
 
-echo "Set up complete 🖖🏻"
+add_separator
+
+echo "Copy VIM configuration file..."
+[[ ! -f ~/.vimrc ]] && curl -o ~/.vimrc https://raw.githubusercontent.com/p-fernandez/vimrc/main/.vimrc
+
+add_separator
+
+echo "Set up complete."
+echo "🖖🏻"
+echo " "
