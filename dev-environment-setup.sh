@@ -25,7 +25,7 @@ echo "Start... ⚡️"
 add_separator
 
 # Check for Homebrew, install if we don't have it
-if test ! $(which brew); then
+if test ! "$(which brew)"; then
     echo "Installing Homebrew..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
@@ -53,6 +53,7 @@ PACKAGES=(
     libjpeg
     lynx
     pkg-config
+    shellcheck
     ssh-copy-id
     the_silver_searcher
     tmux
